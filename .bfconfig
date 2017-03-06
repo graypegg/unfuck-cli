@@ -1,8 +1,12 @@
 {
-	"arrayType": "Uint8Array",
-	"tapeWidth": 900,
-	"inputType": "Number",
-	"outputType": "Number",
-	"compilerMode": "raw",
-	"targetDirectory": "./dist"
+	"compiler": {
+		"type": "Uint8Array",
+		"tapeWidth": 30000,
+		"in": "String",
+		"out": "String",
+		"target": "simple-es6",
+		"language": "standard"
+	},
+	"moduleType": "cjs",
+	"targetDirectory": "./"
 }

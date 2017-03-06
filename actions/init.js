@@ -4,31 +4,33 @@ var inquirer = require('inquirer');
 var questions = [
 	{
 		type: 'list',
-		name: 'arrayType',
+		name: 'compiler.type',
 		message: 'Default array datatype?',
+		default: 'Uint8Array',
 		choices: [
-			'Array',
-			'Int8Array',
 			'Uint8Array',
-			'Uint8ClampedArray',
-			'Int16Array',
+			'Int8Array',
 			'Uint16Array',
+			'Int16Array',
+			'Uint32Array',
 			'Int32Array',
-			'Uint32Array'
+			'Array'
 		]
 	},
 	{
 		type: 'input',
-		name: 'tapeWidth',
+		name: 'compiler.tapeWidth',
 		message: 'Default array (tape) width?',
+		default: 30000,
 		validate: (val) => !isNaN(val) || "Width MUST be a integer",
 		filter: (val) => parseInt(val),
 		when: (ans) => ans.arrayType != 'Array'
 	},
 	{
 		type: 'list',
-		name: 'inputType',
+		name: 'compiler.in',
 		message: 'Default input datatype?',
+		default: 'String',
 		choices: [
 			'String',
 			'Number'
@@ -36,8 +38,9 @@ var questions = [
 	},
 	{
 		type: 'list',
-		name: 'outputType',
+		name: 'compiler.out',
 		message: 'Default output datatype?',
+		default: 'String',
 		choices: [
 			'String',
 			'Number'
@@ -45,37 +48,54 @@ var questions = [
 	},
 	{
 		type: 'list',
-		name: 'compilerMode',
-		message: 'Compiler mode?',
+		name: 'compiler.target',
+		message: 'Compiler output target?',
+		default: 'simple-es6',
 		choices: [
-			{ name: 'Node.js/commonJS module', value: 'node'},
-			{ name: 'ES6 module', value: 'es6'},
-			{ name: 'Raw function', value: 'raw'}
+			{ name: 'Synchronous ES6', short: 'simple-es6', value: 'simple-es6'},
+			{ name: 'Asynchronous ES6', short: 'interactive-es6', value: 'interactive-es6'}
+		]
+	},
+	{
+		type: 'list',
+		name: 'moduleType',
+		message: 'Compiler mode?',
+		default: 'cjs',
+		choices: [
+			{ name: 'Node.js/commonJS module', short: 'cjs', value: 'cjs'},
+			{ name: 'ES6 module', short: 'es6', value: 'es6'},
+			{ name: 'Global function', short: 'global', value: 'global'}
 		]
 	},
 	{
 		type: 'input',
 		name: 'targetDirectory',
 		message: 'Where should compiled files go?',
-		validate: (val) => (val.slice(0,2) === './' && val.length > 2) || 'Must be a relative path begining with \'./\''
+		default: './',
+		validate: (val) => fs.existsSync(val) || 'You must supply a valid directory path.'
 	}
 
 ];
 
 module.exports = () => {
 	inquirer.prompt(questions).then(function (ans) {
+
+		// This will be removed when Unfuck has multiple BF languages...
+		ans.compiler.language = 'standard';
+		// ---
+
 		var json = JSON.stringify(ans, null, '\t');
 
-		fs.writeFile('.bfconfig', json, { flag: 'wx' }, function (err) {
+		fs.writeFile('.bfconfig', json, { flag: 'wx' }, (err) => {
 			if (err) {
 				if (err.code === 'EEXIST') {
 					inquirer.prompt({
 						type: 'confirm',
 						name: 'overwrite',
 						message: 'Overwrite current .bfconfig?'
-					}).then(function (ans) {
+					}).then((ans) => {
 						if (ans.overwrite) {
-							fs.writeFile('.bfconfig', json, { flag: 'w' }, function (err) {
+							fs.writeFile('.bfconfig', json, { flag: 'w' }, (err) => {
 								if (err) throw err;
 								console.log('Saved.');
 							});
