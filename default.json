@@ -1,7 +1,0 @@
-{
-	"arrayType": "Array",
-	"inputType": "String",
-	"outputType": "String",
-	"compilerMode": "node",
-	"targetDirectory": "./bf_dist"
-}
