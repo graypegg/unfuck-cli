@@ -1,0 +1,8 @@
+{
+	"arrayType": "Uint8Array",
+	"tapeWidth": 900,
+	"inputType": "Number",
+	"outputType": "Number",
+	"compilerMode": "raw",
+	"targetDirectory": "./dist"
+}
